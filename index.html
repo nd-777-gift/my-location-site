@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>一键定位页面</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: "微软雅黑", Arial, sans-serif;
+      max-width: 480px;
+      margin: 2rem auto;
+      padding: 1rem;
+      text-align: center;
+      background: #f0f2f5;
+      color: #333;
+    }
+    button {
+      font-size: 18px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background: #409eff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background: #66b1ff;
+    }
+    #output {
+      margin-top: 20px;
+      font-size: 16px;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <h1>📍 获取当前位置</h1>
+  <button onclick="getLocation()">点击获取定位</button>
+  <div id="output"></div>
+
+  <script>
+    function getLocation() {
+      const output = document.getElementById("output");
+      if (!navigator.geolocation) {
+        output.innerText = "你的浏览器不支持地理定位。";
+        return;
+      }
+      output.innerText = "正在获取位置，请稍候…";
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude, accuracy } = position.coords;
+          output.innerHTML = `
+            📌 定位成功：<br>
+            纬度: ${latitude}<br>
+            经度: ${longitude}<br>
+            精度: ±${accuracy} 米
+          `;
+        },
+        (error) => {
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              output.innerText = "❌ 用户拒绝了定位权限。";
+              break;
+            case error.POSITION_UNAVAILABLE:
+              output.innerText = "❌ 无法获取位置信息。";
+              break;
+            case error.TIMEOUT:
+              output.innerText = "⚠️ 定位请求超时。";
+              break;
+            default:
+              output.innerText = "未知错误。";
+          }
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    }
+  </script>
+</body>
+</html>
